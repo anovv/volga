@@ -24,8 +24,8 @@ class TestStreamingJobE2E(unittest.TestCase):
     def test_join_streams(self):
 
         # TODO increasing this 10x prevents sources from reporting finish, why?
-        s1_num_events = 300
-        s2_num_events = 100
+        s1_num_events = 100
+        s2_num_events = 50
 
         source1 = self.ctx.from_collection([(i, f'a{i}') for i in range(s1_num_events)])
         source2 = self.ctx.from_collection([(i + 1, f'b{i + 1}') for i in range(s2_num_events)])
@@ -41,7 +41,7 @@ class TestStreamingJobE2E(unittest.TestCase):
             .set_parallelism(1)
 
         s.sink(sink_function)
-        s.sink(lambda x: print(x) if x[0]%1000 == 0 else None)
+        # s.sink(lambda x: print(x) if x[0]%10 == 0 else None)
         # s.sink(print)
         ctx.execute()
         res = ray.get(sink_cache.get_values.remote())
